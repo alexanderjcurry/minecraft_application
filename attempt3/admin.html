@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Server Control</title>
+</head>
+<body>
+    <h1>Admin - Server Control</h1>
+    {% for container in containers %}
+    <div style="color: {{ 'green' if container.status == 'running' else 'red' }}">
+        {{ container.name }} - {{ container.status }}
+        <form action="{{ url_for('toggle_container', container_id=container.id) }}" method="post">
+            <button type="submit">{{ 'Stop' if container.status == 'running' else 'Start' }}</button>
+        </form>
+    </div>
+    {% endfor %}
+    <a href="/">Back to Home</a>
+</body>
+</html>

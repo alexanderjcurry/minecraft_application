@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Your Servers</h1>
+<table>
+    <tr>
+        <th>Server Name</th>
+        <th>Port</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    {% for container in containers %}
+    <tr>
+        <td>{{ container.name }}</td>
+        <td>{{ container.port }}</td>
+        <td>{{ container.status }}</td>
+        <td>
+            <button onclick="startServer('{{ container.id }}')">Start</button>
+            <button onclick="stopServer('{{ container.id }}')">Stop</button>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<script>
+    // JavaScript functions for startServer and stopServer
+</script>
+{% endblock %}

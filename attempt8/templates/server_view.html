@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="server-container">
+    <div class="server-sidebar">
+        <ul>
+            <li class="active"><a href="{{ url_for('view_server', server_id=container.id) }}">Overview</a></li>
+            <li><a href="{{ url_for('configure_server', server_id=container.id) }}">Configure</a></li>
+            <li><a href="{{ url_for('terminal_server', server_id=container.id) }}">Terminal</a></li>
+        </ul>
+    </div>
+    <div class="server-content">
+        <h1>Overview</h1>
+        <p>Server Name: {{ container.name }}</p>
+        <p>Server Port: {{ container.port }}</p>
+        <p>Server Status: {{ container.status }}</p>
+        <button onclick="startServer('{{ container.id }}')">Start Server</button>
+        <button onclick="stopServer('{{ container.id }}')">Stop Server</button>
+        <button onclick="location.href='{{ url_for('cancel_subscription', server_id=container.id) }}'">End Subscription</button>
+    </div>
+</div>
+{% endblock %}

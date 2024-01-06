@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <style>
+        .container-status {
+            padding: 5px 10px;
+            color: white;
+            border-radius: 5px;
+        }
+        .running {
+            background-color: green;
+        }
+        .stopped, .deleted {
+            background-color: red;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <table>
+        <tr>
+            <th>Container Name</th>
+            <th>RAM</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Update RAM</th>
+        </tr>
+        {% for container in containers %}
+        <tr>
+            <td>{{ container.name }}</td>
+            <td>{{ container.ram }}</td>
+            <td>
+                <span class="container-status {{ container.status }}">
+                    {{ container.status }}
+                </span>
+            </td>
+            <td>
+                <a href="{{ url_for('toggle_container', container_name=container.name) }}">
+                    {{ 'Stop' if container.status == 'running' else 'Start' }}
+                </a>
+            </td>
+            <td>
+                <form action="{{ url_for('update_ram', container_name=container.name) }}" method="post">
+                    <select name="new_ram">
+                        <option value="2g">2GB</option>
+                        <option value="4g">4GB</option>
+                        <option value="8g">8GB</option>
+                    </select>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

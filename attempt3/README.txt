@@ -1,0 +1,1 @@
+Server has admin page that works to start and stop docker containers 127.0.0.1:5000/admin 

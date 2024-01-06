@@ -1,0 +1,51 @@
+@app.route('/webhook', methods=['POST'])
+def stripe_webhook():
+    payload = request.get_data(as_text=True)
+    sig_header = request.headers.get('Stripe-Signature')
+
+    # Define the ram_sizes dictionary
+    ram_sizes = {
+        'price_1OOrfWJxVhVlFzT6yrZsLu8m': '2g',  # 2GB Server for $10
+        'price_1OOrfmJxVhVlFzT6Jsrxd3W6': '4g',  # 4GB Server for $20
+        'price_1OOrg7JxVhVlFzT68Xzkdgc9': '8g',  # 8GB Server for $40
+    }
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, app.config['STRIPE_WEBHOOK_SECRET']
+        )
+
+        if event['type'] == 'checkout.session.completed':
+            logging.debug("Checkout session completed event triggered")
+
+            session = event['data']['object']
+            # Assuming 'price_id' is obtained correctly from the session object
+            price_id = session['amount_total']  # You need to adjust this line based on the actual session structure
+
+            ram_size = ram_sizes.get(price_id, '2g')
+            logging.debug(f"RAM size determined: {ram_size}")
+
+            container_name, port = generate_container_name_and_port()
+            logging.debug(f"Container name and port generated: {container_name}, {port}")
+
+            container = docker_client.containers.run(
+                "itzg/minecraft-server",
+                detach=True,
+                environment={"EULA": "TRUE"},
+                ports={'25565/tcp': ('0.0.0.0', port)},
+                name=container_name,
+                mem_limit=ram_size
+            )
+            logging.debug(f"Container run command executed for {container_name}")
+
+            add_container_to_db(container_name, port)
+            logging.info(f"Server started with name: {container_name} on port {port}, RAM: {ram_size}")
+            return jsonify({'status': 'success'}), 200
+
+    except Exception as e:
+        error_message = f"Webhook Error: {str(e)}"
+        logging.error(error_message, exc_info=True)
+        return jsonify({'status': 'failure', 'message': error_message}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=4242)

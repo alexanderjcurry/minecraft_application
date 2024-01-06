@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Welcome to Minecraft Server Hosting</h1>
+
+<!-- Server Rental Form -->
+{% if current_user.is_authenticated %}
+    <form action="{{ url_for('rent_server') }}" method="post">
+        <select name="server_type">
+            <option value="price_1OOrfWJxVhVlFzT6yrZsLu8m">2GB Server - $10</option>
+            <option value="price_1OOrfmJxVhVlFzT6Jsrxd3W6">4GB Server - $20</option>
+            <option value="price_1OOrg7JxVhVlFzT68Xzkdgc9">8GB Server - $40</option>
+        </select>
+        <button type="submit">Rent a Server</button>
+    </form>
+{% else %}
+    <p>Please <a href="{{ url_for('login') }}">login</a> or <a href="{{ url_for('register') }}">register</a> to rent a server.</p>
+{% endif %}
+{% endblock %}
